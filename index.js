@@ -3,6 +3,7 @@ var charm = require('charm');
 var x256 = require('x256');
 var buffers = require('buffers');
 var es = require('event-stream');
+var fs = require('fs');
 
 var Stream = require('stream').Stream;
 
@@ -10,11 +11,11 @@ module.exports = function (opts) {
     if (!opts) opts = {};
     if (!opts.cols) opts.cols = 80;
     
-    var c = charm();
-    var bufs = buffers();
+    var c = opts.charm ? opts.charm : charm();
+    if(!opts.filename) var bufs = buffers();
     
-    var ws = es.writeArray(function (err, bufs) {
-        var data = buffers(bufs).slice();
+    var paintImage = function (err, bufs) {
+        var data = opts.filename ? fs.readFileSync(opts.filename) : buffers(bufs).slice();
         var png = new PNG(data);
         
         png.decode(function (pixels) {
@@ -36,9 +37,14 @@ module.exports = function (opts) {
                 c.display('reset').write('\r\n');
             }
             
-            c.display('reset').end();
+            if(!opts.filename) c.display('reset').end();
         });
-    });
+    }
     
-    return es.duplex(ws, c);
+    if(opts.filename) {
+        paintImage();
+    } else {
+        var ws = es.writeArray(paintImage);
+        return es.duplex(ws, c);
+    }
 };
