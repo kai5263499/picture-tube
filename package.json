@@ -1,10 +1,10 @@
 {
     "name" : "picture-tube",
     "description" : "render 256 color images on the terminal",
-    "version" : "0.0.4",
+    "version" : "0.0.5",
     "repository" : {
         "type" : "git",
-        "url" : "git://github.com/substack/picture-tube.git"
+        "url" : "git://github.com/kai5263499/picture-tube.git"
     },
     "main" : "index.js",
     "bin" : {
